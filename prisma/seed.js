@@ -445,7 +445,6 @@ async function main() {
           "Av. Próceres de la Independencia 1234, San Juan de Lurigancho",
         lat: -12.003,
         lng: -77.001,
-        tableNumber: "345621",
       },
       {
         department: "Lima",
@@ -455,7 +454,6 @@ async function main() {
         address: "Av. Universitaria 5678, Comas",
         lat: -11.936,
         lng: -77.062,
-        tableNumber: "412389",
       },
     ],
   });
