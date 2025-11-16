@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" //sqlite
+  url      = env("DATABASE_URL")
+}
+
+enum EventType {
+  ELECTION    // Evento relacionado con el día de votación o proceso electoral    
+  TRAINING    // Evento de capacitación para miembros de mesa
+  DEADLINE    // Fechas límite del proceso electoral
+  OTHER       // Cualquier otro evento relevante
+}
+
+enum RoleType {
+  ALL         // Todos los usuarios
+  ELECTOR     // Electores
+  MESA        // Miembros de mesa
+}
+
+enum CandidateRole {
+  PRESIDENT
+  VICE_PRESIDENT
+  CONGRESS
+  SENATOR
+  PARLAMENTO_ANDINO
+}
+
+enum RegionLevel {
+  NATIONAL
+  REGIONAL
+}
+
+enum GuideRole {
+  INFO
+  ELECTOR
+  MESA
+}
+
+enum GuideSection {
+  OVERVIEW      // visión general
+  BEFORE        // antes del día de la elección
+  DURING        // durante el día
+  AFTER         // después
+  INSTALLATION  // instalación de la mesa
+  SUFRAGIO      // proceso de votación
+  CLOSING       // escrutinio/cierre
+}
+
+// Eventos para el calendario electoral
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String    // Título
+  description String    // Descripción
+  date        DateTime  // Fecha
+  type        EventType // Tipo de evento
+  targetRole  RoleType @default(ALL)  // A qué rol de usuario mostrar
+}
+
+// Partidos políticos
+model Party {
+  id          Int      @id @default(autoincrement())
+  name        String   // Nombre del partido
+  description String   // Descripción
+  logoUrl     String?  // Logo del partido
+  website     String?  // Página web
+
+  candidates  Candidate[]
+  proposals   Proposal[]
+}
+
+model Candidate {
+  id          Int            @id @default(autoincrement())
+  fullName    String
+  role        CandidateRole
+  regionLevel RegionLevel
+  bio         String
+  cvUrl       String?
+
+  party       Party          @relation(fields: [partyId], references: [id])
+  partyId     Int
+}
+
+model Proposal {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  topic       ProposalTopic
+
+  party       Party          @relation(fields: [partyId], references: [id])
+  partyId     Int
+}
+
+enum ProposalTopic {
+  ECONOMY
+  EDUCATION
+  HEALTH
+  SECURITY
+  OTHER
+}
+
+model RoleGuide {
+  id      Int          @id @default(autoincrement())
+  role    GuideRole
+  section GuideSection
+  title   String
+  content String
+}
+
+model VotingLocation {
+  id          Int @id @default(autoincrement())
+  department  String
+  province    String
+  district    String
+  placeName   String
+  address     String
+  lat         Float
+  lng         Float
+
+  voterAssingments VoterAssignment[]
+}
+
+model VoterAssignment {
+  id               Int             @id @default(autoincrement())
+  dni              String          @unique            // DNI ficticio
+  fullName         String?                            // Nombre opcional para la demo
+  isMesaMember     Boolean         @default(false)    // ¿También es miembro de mesa?
+  tableNumber      String                             // Mesa asignada
+
+  votingLocation   VotingLocation  @relation(fields: [votingLocationId], references: [id])
+  votingLocationId Int
+}
