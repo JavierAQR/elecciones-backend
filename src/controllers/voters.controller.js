@@ -1,4 +1,4 @@
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
 
 export const getVoterByDni = async (req, res) => {
     const { dni } = req.params;

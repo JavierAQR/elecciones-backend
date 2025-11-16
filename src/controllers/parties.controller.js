@@ -1,3 +1,5 @@
+import prisma from "../lib/prisma.js";
+
 export const getParties = async (req, res) => {
   try {
     const parties = await prisma.party.findMany({
