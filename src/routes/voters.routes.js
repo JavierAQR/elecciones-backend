@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as votersController from "../controllers/voters.controller"
+import * as votersController from "../controllers/voters.controller.js"
 
 const router = Router();
 
